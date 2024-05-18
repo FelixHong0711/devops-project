@@ -7,17 +7,18 @@ on:
 
 jobs:
   check_website:
+    name: Monitoring and Alerting
     runs-on: ubuntu-latest
 
     steps:
     - name: Check if website is up
-      id: check_website
       run: |
-        if curl -s --head  --request GET https://felixhong0711.github.io/devops-project/ | grep "200 OK" > /dev/null; then
-          echo "Website is up"
-        else
+        HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" https://felixhong0711.github.io/devops-project/)
+        if [ "$HTTP_STATUS" -ne 200 ]; then
           echo "Website is down"
           exit 1
+        else
+          echo "Website is up"
         fi
 
     - name: Send email if website is down
