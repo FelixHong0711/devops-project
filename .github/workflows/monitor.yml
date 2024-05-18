@@ -1,0 +1,34 @@
+name: Monitoring and Alerting
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  check_website:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check if website is up
+      id: check_website
+      run: |
+        if curl -s --head  --request GET https://felixhong0711.github.io/devops-project/ | grep "200 OK" > /dev/null; then
+          echo "Website is up"
+        else
+          echo "Website is down"
+          exit 1
+        fi
+
+    - name: Send email if website is down
+      if: failure()
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: "Website Down Alert"
+        to: ${{ secrets.ALERT_EMAIL }}
+        from: ${{ secrets.EMAIL_USERNAME }}
+        body: "The website https://felixhong0711.github.io/devops-project/ is down."
