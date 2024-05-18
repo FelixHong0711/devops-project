@@ -13,8 +13,17 @@ async function runTest() {
     await driver.get('http://localhost:8000/');
     console.log(await driver.getTitle());
     await driver.sleep(800);
+    const pageSource = await driver.getPageSource();
+
+    // Extract the body content from the HTML source
+    const bodyStartIndex = pageSource.indexOf('<body>');
+    const bodyEndIndex = pageSource.indexOf('</body>');
+    const bodyContent = pageSource.substring(bodyStartIndex + 6, bodyEndIndex);
+
+    // Output the body content
+    console.log('Page body content:', bodyContent);
     // Find the button element
-    const button = await driver.findElement(By.css('button'));
+    const button = await driver.wait(until.elementLocated(By.css('button')), 5000);
 
     // Check if the button is clickable
     if (await button.isEnabled()) {
