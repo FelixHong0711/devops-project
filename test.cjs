@@ -10,7 +10,8 @@ async function runTest() {
   const driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
 
   try {
-    await driver.get('http://localhost:8000/');
+    await driver.get('http://localhost:8000/devops-project/');
+    console.log(await driver.getTitle());
     await driver.sleep(800);
     // Find the button element
     const button = await driver.findElement(By.css('button'));
