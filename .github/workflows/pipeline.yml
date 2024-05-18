@@ -127,8 +127,6 @@ jobs:
       - name: Install Chrome WebDriver
         run: |
           npm install selenium-webdriver
-          sudo apt-get update
-          sudo apt-get install -y chromium-chromedriver
 
       - name: Run Selenium test
         run: |
