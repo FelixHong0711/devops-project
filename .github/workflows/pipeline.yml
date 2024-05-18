@@ -106,8 +106,7 @@ jobs:
           path: /tmp
       
       - name: Load image
-        run: |
-          docker load --input /tmp/myimage.tar
+        run: docker load --input /tmp/myimage.tar
     
       - name: Deploy services
         run: docker-compose up -d   
@@ -119,10 +118,7 @@ jobs:
         uses: actions/setup-node@v4
 
       - name: Install Chrome WebDriver
-        run: |
-          npm install selenium-webdriver
+        run: npm install selenium-webdriver
 
       - name: Run Selenium test
-        run: |
-          docker ps
-          node test.cjs
+        run: node test.cjs
