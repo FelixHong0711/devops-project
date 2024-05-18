@@ -1,0 +1,14 @@
+name: Monitoring and Alerting
+on:
+  schedule:
+    - cron: '*/5 *  * * *'
+jobs:
+  ping_site:
+    runs-on: ubuntu-latest
+    name: Uptime Check
+    steps:
+      - name: Ping Site
+        uses: srt32/uptime@v0.2
+        with:
+          url-to-hit: 'https://felixhong0711.github.io/devops-project/'
+          expected-statuses: '200'
