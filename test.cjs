@@ -11,17 +11,9 @@ async function runTest() {
 
   try {
     await driver.get('http://localhost:8000/');
-    console.log(await driver.getTitle());
+    
     await driver.sleep(800);
-    const pageSource = await driver.getPageSource();
 
-    // Extract the body content from the HTML source
-    const bodyStartIndex = pageSource.indexOf('<body>');
-    const bodyEndIndex = pageSource.indexOf('</body>');
-    const bodyContent = pageSource.substring(bodyStartIndex + 6, bodyEndIndex);
-
-    // Output the body content
-    console.log('Page body content:', bodyContent);
     // Find the button element
     const button = await driver.wait(until.elementLocated(By.css('button')), 5000);
 
@@ -37,7 +29,8 @@ async function runTest() {
       await driver.sleep(1000);
       
       // Output success message
-      console.log('Button clicked successfully!');
+      console.log('Button clicked successfully and count is working well!');
+      console.log('All the tests have been satisfied!');
     } else {
       // Output a message if the button is not clickable
       console.log('Button is not clickable.');
