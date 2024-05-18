@@ -126,7 +126,9 @@ jobs:
   release:
     name: Release to Production environment using Github Pages
     needs: test
-    environment: production
+    environment: 
+      name: production
+      url: "https://felixhong0711.github.io/devops-project/"
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
