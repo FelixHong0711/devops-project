@@ -25,7 +25,7 @@ async function runTest() {
       await driver.wait(async () => {
         const buttonText = await button.getText();
         return buttonText.includes('1');}, 1000);
-      // Wait for some time to ensure the click action takes effect (you can adjust this as needed)
+
       await driver.sleep(1000);
       
       // Output success message
@@ -33,13 +33,20 @@ async function runTest() {
       console.log('All the tests have been satisfied!');
     } else {
       // Output a message if the button is not clickable
-      console.log('Button is not clickable.');
+      throw new Error('Button is not clickable!');
     }
   } catch (error) {
-    console.error('Test failed with error:', error);
+    console.error('Test failed:', error);
+    throw error;
   } finally {
     await driver.quit();
   }
 }
 
-runTest();
+(async () => {
+  try {
+    await runTest();
+  } catch (error) {
+    process.exit(1);
+  }
+})();
