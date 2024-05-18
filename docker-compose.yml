@@ -5,4 +5,4 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ./src/main.tsx:/usr/share/nginx/html:ro
+      - ./src:/usr/share/nginx/html:ro
