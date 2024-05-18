@@ -10,7 +10,7 @@ async function runTest() {
   const driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
 
   try {
-    await driver.get('http://localhost:8000/');
+    await driver.get('http://localhost:8000/devops-project/');
     
     await driver.sleep(800);
 
