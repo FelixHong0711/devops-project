@@ -2,7 +2,7 @@ name: Monitoring and Alerting
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0 0 * * 0'
   workflow_dispatch:
 
 jobs:
