@@ -3,7 +3,7 @@ name: Monitoring and Alerting
 on:
   schedule:
     # Perform monitoring on Sunday per week
-    - cron: '0 0 * * 0'
+    - cron: "0 0 * * 0"
   workflow_dispatch:
 
 jobs:
@@ -12,38 +12,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check if website is up # check if website status is 200, then it is up, otherwise, it is down
-      run: |
-        HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" https://felixhong0711.github.io/devops-project/)
-        if [ "$HTTP_STATUS" -ne 200 ]; then
-          echo "Website is down"
-          exit 1
-        else
-          echo "Website is up"
-        fi
+      - name: Check if website is up # check if website status is 200, then it is up, otherwise, it is down
+        run: |
+          HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" https://felixhong0711.github.io/devops-project/)
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "Website is down"
+            exit 1
+          else
+            echo "Website is up"
+          fi
 
-    - name: Send email if website is down # sent notify email for the status fail
-      if: failure()
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: "Website Down Alert"
-        to: ${{ secrets.ALERT_EMAIL }}
-        from: ${{ secrets.EMAIL_USERNAME }}
-        body: "The website https://felixhong0711.github.io/devops-project/ is down. Please go to Github Pages for details"
-        
-    - name: Send email if website is up # sent notify email for the status success
-      if: success()
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: "Website Still Works"
-        to: ${{ secrets.ALERT_EMAIL }}
-        from: ${{ secrets.EMAIL_USERNAME }}
-        body: "The website https://felixhong0711.github.io/devops-project/ still works as expected."
+      - name: Send email if website is down # sent notify email for the status fail
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Website Down Alert"
+          to: ${{ secrets.ALERT_EMAIL }}
+          from: ${{ secrets.EMAIL_USERNAME }}
+          body: "The website https://felixhong0711.github.io/devops-project/ is down. Please go to Github Pages for details"
+
+      - name: Send email if website is up # sent notify email for the status success
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Website Still Works"
+          to: ${{ secrets.ALERT_EMAIL }}
+          from: ${{ secrets.EMAIL_USERNAME }}
+          body: "The website https://felixhong0711.github.io/devops-project/ still works as expected."

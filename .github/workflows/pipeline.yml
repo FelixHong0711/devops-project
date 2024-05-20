@@ -3,9 +3,9 @@ name: Devops Pipeline
 on:
   push:
     branches:
-      - gh-pages  # Trigger whenever there is modification in content pages
-  workflow_dispatch:  # Trigger manually
-  
+      - gh-pages # Trigger whenever there is modification in content pages
+  workflow_dispatch: # Trigger manually
+
 jobs:
   code_quality_analysis:
     name: Code Quality Analysis
@@ -28,7 +28,7 @@ jobs:
 
       - name: Format # Format our script again to standard quality
         run: npm run format
-        
+
   build:
     name: Build
     needs: code_quality_analysis
@@ -37,7 +37,7 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-          
+
       - name: Setup node
         uses: actions/setup-node@v4
 
@@ -52,47 +52,47 @@ jobs:
         with:
           name: production-files
           path: ./dist
-          
+
   deploy:
     name: Deploy to Staging environment using Docker Compose
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Set up Docker Buildx # Set up docker 
-      uses: docker/setup-buildx-action@v3
-      
-    - name: Set up Docker Compose # Install docker-compose
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y docker-compose
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Login to DockerHub # Login to my account on DockerHub
-      uses: docker/login-action@v3
-      # Use feature of Github to make my account and password secret
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }} 
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Set up Docker Buildx # Set up docker
+        uses: docker/setup-buildx-action@v3
 
-    - name: Build and export # Build docker and export for later step to use
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        tags: myimage:latest
-        outputs: type=docker,dest=/tmp/myimage.tar
-      
-    - name: Upload artifact # Upload docker built as an artifact for later usage
-      uses: actions/upload-artifact@v4
-      with:
-        name: myimage
-        path: /tmp/myimage.tar
+      - name: Set up Docker Compose # Install docker-compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
 
-    - name: Deploy services # Deploy to local host
-      run: docker-compose up -d
-      
+      - name: Login to DockerHub # Login to my account on DockerHub
+        uses: docker/login-action@v3
+        # Use feature of Github to make my account and password secret
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and export # Build docker and export for later step to use
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          tags: myimage:latest
+          outputs: type=docker,dest=/tmp/myimage.tar
+
+      - name: Upload artifact # Upload docker built as an artifact for later usage
+        uses: actions/upload-artifact@v4
+        with:
+          name: myimage
+          path: /tmp/myimage.tar
+
+      - name: Deploy services # Deploy to local host
+        run: docker-compose up -d
+
   test:
     name: Integration test using Selenium
     runs-on: ubuntu-latest
@@ -100,19 +100,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Download artifact # Download docker for usage in this step
         uses: actions/download-artifact@v4
         with:
           name: myimage
           path: /tmp
-      
+
       - name: Load image # Load artifact downloaded
         run: docker load --input /tmp/myimage.tar
-    
+
       - name: Deploy services # Deploy to staging area (local host server)
-        run: docker-compose up -d   
-          
+        run: docker-compose up -d
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -124,7 +124,7 @@ jobs:
 
       - name: Run Selenium test # Run selenium test created in file test.cjs
         run: node test.cjs
-        
+
   release:
     name: Release to Production environment using Github Pages
     needs: test
@@ -146,11 +146,11 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          
+
       - name: Generate tag name # generate tag name based on date for our release
         id: tag_name
         run: echo "::set-output name=tag_name::release-$(date +'%Y%m%d%H%M%S')"
-        
+
       - name: Create release # create release data (for replicating or tracking)
         id: create_release
         uses: actions/create-release@v1
