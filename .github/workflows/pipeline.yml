@@ -3,7 +3,7 @@ name: Devops Pipeline
 on:
   push:
     branches:
-      - gh-pages # Trigger whenever there is modification in content pages
+      - main # Trigger whenever there is modification in repo
   workflow_dispatch: # Trigger manually
 
 jobs:
