@@ -3,10 +3,12 @@ const chrome = require("selenium-webdriver/chrome");
 
 async function runTest() {
   const options = new chrome.Options();
-  // options.addArguments("--no-sandbox");
-  options.setChromeBinaryPath("/usr/bin/chromium-browser");
-  // options.addArguments("--disable-dev-shm-usage");
+  options.addArguments("--no-sandbox");
+  options.addArguments("--disable-dev-shm-usage");
   options.addArguments("--headless");
+  options.addArguments("--disable-gpu");
+  options.addArguments("--window-size=1920,1080");
+  
   const driver = await new Builder()
     .forBrowser("chrome")
     .setChromeOptions(options)
@@ -16,36 +18,38 @@ async function runTest() {
     // The port configured in docker
     await driver.get("http://localhost:8000/");
 
-    await driver.sleep(800);
-    // I will perform 2 test, first is if button clickable, then I will check the content (count) of button,
-    // if not clickable -> display error immediately
-    // Find the button element
+    // Wait for the page to be fully loaded
+    await driver.wait(until.elementLocated(By.css("body")), 10000);
+
+    // Find and wait for the button element with increased timeout
     const button = await driver.wait(
       until.elementLocated(By.css("button")),
-      5000,
+      10000,
+      "Button not found after 10 seconds"
     );
 
-    // Check if the button is clickable
-    if (await button.isEnabled()) {
-      await driver.sleep(800);
-      // Click the button
-      await button.click();
+    // Wait for the button to be clickable
+    await driver.wait(
+      until.elementIsEnabled(button),
+      10000,
+      "Button not clickable after 10 seconds"
+    );
 
-      await driver.sleep(800);
-      // Get the button text
-      const buttonText = await button.getText();
+    // Click the button
+    await button.click();
 
-      // Check if the count is working well
-      if (buttonText.includes("1")) {
-        console.log("Button clicked successfully!");
-        console.log("Count is working well!");
-      } else {
-        throw new Error("Count is not working well!");
-      }
-    } else {
-      // Output a message if the button is not clickable
-      throw new Error("Button is not clickable!");
-    }
+    // Wait for the button text to update
+    await driver.wait(
+      async () => {
+        const buttonText = await button.getText();
+        return buttonText.includes("1");
+      },
+      10000,
+      "Button count did not update to 1 after 10 seconds"
+    );
+
+    console.log("Button clicked successfully!");
+    console.log("Count is working well!");
   } catch (error) {
     console.error("Test failed:", error);
     throw error;
