@@ -111,7 +111,7 @@ jobs:
         run: docker load --input /tmp/myimage.tar
 
       - name: Deploy services # Deploy to staging area (local host server)
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Checkout code
         uses: actions/checkout@v4
